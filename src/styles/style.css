@@ -1,0 +1,7 @@
+/* style.css */
+
+@import "blocks/basestyle.css";
+@import url("./libs/bootstrap-icons.css");
+@import url("./libs/prism.css");
+@import "blocks/colormode.css";
+@import "./blocks/custom.css";

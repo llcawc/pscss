@@ -1,0 +1,7 @@
+# Ignore files:
+dist/**/*.*
+public/**/*.*
+vendor/**/*.*
+src/**/*.html
+src/**/*.scss
+src/**/*.css
