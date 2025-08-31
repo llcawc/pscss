@@ -15,7 +15,7 @@ export { rename };
  * ```js
  * // import modules
  * import { dest, src } from "gulp";
- * import { pscss, rename } from "pscss";
+ * import { pscss, rename } from "@pasmurno/pscss";
  *
  * // css task
  * function css() {

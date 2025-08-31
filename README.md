@@ -1,4 +1,4 @@
-# pscss
+# @pasmurno/pscss
 
 Gulp plugin for simple processing of sass styles and modern css style.
 
@@ -7,7 +7,7 @@ Files with the extensions `.css, .scss, .sass, .pcss` are supported. It is also 
 ## install:
 
 ```
-npm install --save-dev pscss
+npm install --save-dev @pasmurno/pscss
 ```
 
 ## options:
@@ -25,7 +25,7 @@ options?: {
 ```js
 // import modules
 import { dest, series, src } from "gulp";
-import { pscss, rename } from "pscss";
+import { pscss, rename } from "@pasmurno/pscss";
 
 // css task
 function makeCSS() {
@@ -110,7 +110,7 @@ The plugin generates/updates source code maps for debugging (uses gulp functions
 
 ### Rename files
 
-If you need to rename a file, you can import the gulp "rename" function from `pscss`
+If you need to rename a file, you can import the gulp "rename" function from `@pasmurno/pscss`
 
 ---
 

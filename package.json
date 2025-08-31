@@ -1,5 +1,5 @@
 {
-  "name": "pscss",
+  "name": "@pasmurno/pscss",
   "version": "0.0.1",
   "description": "Gulp plugin for simple processing of sass styles and modern css style",
   "keywords": [
