@@ -6,6 +6,7 @@ export { rename };
  * Gulp plugin for simple processing of sass styles and modern css style.
  * @param options - optons {}
  * @param options.minify minify CSS files
+ * @param options.presetEnv allows you to use future CSS features today
  * @param option.loadPaths paths for files to imports for SASS/SCSS compiler
  * @param option.purgeCSSoptions remove unused CSS from file - options PurgeCSS
  * @returns object stream.
@@ -39,6 +40,7 @@ export { rename };
  */
 export declare function pscss(options?: {
     minify?: boolean | undefined;
+    presetEnv?: boolean | undefined;
     purgeCSSoptions?: UserDefinedOptions | undefined;
     loadPaths?: string[] | undefined;
 }): Transform;

@@ -1,4 +1,5 @@
 import { purgeCSSPlugin } from '@fullhuman/postcss-purgecss';
+import autoprefixer from 'autoprefixer';
 import cssnano from 'cssnano';
 import { Buffer } from 'node:buffer';
 import { join, relative } from 'node:path';
@@ -7,6 +8,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import PluginError from 'plugin-error';
 import postcss from 'postcss';
 import atImport from 'postcss-import';
+import postcssNested from 'postcss-nested';
 import postcssPresetEnv from 'postcss-preset-env';
 import { compileStringAsync } from 'sass-embedded';
 import rename from './rename.js';
@@ -15,6 +17,7 @@ export { rename };
  * Gulp plugin for simple processing of sass styles and modern css style.
  * @param options - optons {}
  * @param options.minify minify CSS files
+ * @param options.presetEnv allows you to use future CSS features today
  * @param option.loadPaths paths for files to imports for SASS/SCSS compiler
  * @param option.purgeCSSoptions remove unused CSS from file - options PurgeCSS
  * @returns object stream.
@@ -65,6 +68,7 @@ export function pscss(options = {}) {
         }
         if (file.isBuffer()) {
             const minify = options.minify ?? true;
+            const presetEnv = options.presetEnv ?? false;
             const loadPaths = options.loadPaths ?? [file.base, join(file.cwd, 'node_modules')];
             const sourceMap = file.sourceMap ? true : false;
             const extname = file.extname.split('.').pop()?.toLowerCase() ?? '';
@@ -76,7 +80,7 @@ export function pscss(options = {}) {
                     prevSourceMap = sourceMap ? true : false;
                 }
                 // run postcss
-                await post(file, minify, options.purgeCSSoptions, sourceMap, prevSourceMap);
+                await post(file, minify, presetEnv, options.purgeCSSoptions, sourceMap, prevSourceMap);
                 callback(null, file);
             }
             catch (err) {
@@ -92,14 +96,22 @@ export function pscss(options = {}) {
     return stream;
 }
 // postcss compiler
-async function post(file, minify, purgeCSSoptions, sourceMap, prevSourceMap) {
+async function post(file, minify, presetEnv, purgeCSSoptions, sourceMap, prevSourceMap) {
     if (file.isBuffer()) {
         try {
+            const isPresetEnv = presetEnv ? true : false;
             const isPurge = purgeCSSoptions ? true : false;
             const prevMap = prevSourceMap ? file.sourceMap : false;
             const mapOptions = { inline: false, annotation: false, prev: prevMap };
             const css = new TextDecoder().decode(file.contents);
-            const postcssPlugins = [atImport(), postcssPresetEnv()];
+            let postcssPlugins = [];
+            // use PresetEnv or not
+            if (isPresetEnv) {
+                postcssPlugins = [atImport(), postcssPresetEnv()];
+            }
+            else {
+                postcssPlugins = [atImport(), postcssNested(), autoprefixer()];
+            }
             // include PurgeCSS
             if (isPurge) {
                 postcssPlugins.push(purgeCSSPlugin(purgeCSSoptions));

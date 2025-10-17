@@ -9,6 +9,7 @@ function css() {
   return src(['src/styles/style.css'], { sourcemaps: true })
     .pipe(
       pscss({
+        minify: false,
         purgeCSSoptions: {
           content: ['src/*.html', 'src/js/*.js'],
           variables: true,
@@ -42,6 +43,6 @@ function watcher(cb) {
 }
 
 // export
-export { assets }
+export { assets, serve }
 export const dev = series(clear, parallel(assets, css, watcher, serve))
 export const build = series(clear, parallel(assets, css))

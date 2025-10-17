@@ -1,4 +1,5 @@
 import { purgeCSSPlugin, UserDefinedOptions } from '@fullhuman/postcss-purgecss'
+import autoprefixer from 'autoprefixer'
 import cssnano from 'cssnano'
 import { Buffer } from 'node:buffer'
 import { join, relative } from 'node:path'
@@ -7,6 +8,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import PluginError from 'plugin-error'
 import postcss from 'postcss'
 import atImport from 'postcss-import'
+import postcssNested from 'postcss-nested'
 import postcssPresetEnv from 'postcss-preset-env'
 import { compileStringAsync } from 'sass-embedded'
 import { RawSourceMap } from 'source-map'
@@ -18,6 +20,7 @@ export { rename }
  * Gulp plugin for simple processing of sass styles and modern css style.
  * @param options - optons {}
  * @param options.minify minify CSS files
+ * @param options.presetEnv allows you to use future CSS features today
  * @param option.loadPaths paths for files to imports for SASS/SCSS compiler
  * @param option.purgeCSSoptions remove unused CSS from file - options PurgeCSS
  * @returns object stream.
@@ -52,6 +55,7 @@ export { rename }
 export function pscss(
   options: {
     minify?: boolean | undefined
+    presetEnv?: boolean | undefined
     purgeCSSoptions?: UserDefinedOptions | undefined
     loadPaths?: string[] | undefined
   } = {}
@@ -78,6 +82,7 @@ export function pscss(
 
     if (file.isBuffer()) {
       const minify = options.minify ?? true
+      const presetEnv = options.presetEnv ?? false
       const loadPaths = options.loadPaths ?? [file.base, join(file.cwd, 'node_modules')]
       const sourceMap = file.sourceMap ? true : false
       const extname = file.extname.split('.').pop()?.toLowerCase() ?? ''
@@ -91,7 +96,7 @@ export function pscss(
         }
 
         // run postcss
-        await post(file, minify, options.purgeCSSoptions, sourceMap, prevSourceMap)
+        await post(file, minify, presetEnv, options.purgeCSSoptions, sourceMap, prevSourceMap)
 
         callback(null, file)
       } catch (err) {
@@ -111,23 +116,33 @@ export function pscss(
 async function post(
   file: File,
   minify: boolean,
+  presetEnv: boolean,
   purgeCSSoptions: UserDefinedOptions | undefined,
   sourceMap: boolean,
   prevSourceMap: boolean
 ) {
   if (file.isBuffer()) {
     try {
+      const isPresetEnv = presetEnv ? true : false
       const isPurge = purgeCSSoptions ? true : false
       const prevMap = prevSourceMap ? file.sourceMap : false
       const mapOptions = { inline: false, annotation: false, prev: prevMap }
 
       const css = new TextDecoder().decode(file.contents)
-      const postcssPlugins: postcss.AcceptedPlugin[] = [atImport(), postcssPresetEnv()]
+      let postcssPlugins: postcss.AcceptedPlugin[] = []
+
+      // use PresetEnv or not
+      if (isPresetEnv) {
+        postcssPlugins = [atImport(), postcssPresetEnv()]
+      } else {
+        postcssPlugins = [atImport(), postcssNested(), autoprefixer()]
+      }
 
       // include PurgeCSS
       if (isPurge) {
         postcssPlugins.push(purgeCSSPlugin(purgeCSSoptions))
       }
+
       // include cssnano
       if (minify) {
         postcssPlugins.push(
@@ -142,6 +157,7 @@ async function post(
           })
         )
       }
+
       // run compiler
       const result = await postcss(postcssPlugins).process(css, {
         from: file.path,

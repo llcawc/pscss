@@ -12,9 +12,10 @@ npm install --save-dev @pasmurno/pscss
 
 ## options:
 
-```
+```js
 options?: {
     minify?: boolean | undefined // minify CSS files (default: true)
+    presetEnv?: boolean | undefined // allows you to use future CSS features today (default: false)
     purgeCSSoptions?: UserDefinedOptions | undefined // remove unused CSS from file
     loadPaths?: string[] | undefined // paths for files to imports for SASS/SCSS compiler
 }
@@ -96,7 +97,9 @@ export const sass = series(cleanDist, makeSASS);
 
 The plugin uses the [Embedded Sass Host](https://www.npmjs.com/package/sass-embedded) (Dart SASS as `sass-embedded`) compiler for sass/scss files.
 
-[PostCSS](https://github.com/postcss/postcss) is used with the `postcss-import` and `postcss-preset-env` plugins to support importing CSS fragments for css/pcss files, new style standards, and target browsers.
+[PostCSS](https://github.com/postcss/postcss) is used as default with the `postcss-import`, `postcss-nested` and `autoprefixer` plugins to support importing CSS fragments for css/pcss files, to unwraps nested rules the way Sass does and to add vendor prefixes, using data from Can I Use.
+
+However, if the "presetEnv" option is enabled, only the `postcss-import` and `postcss-preset-env` plugins are used to support importing CSS fragments, new style standards and target browsers.
 
 PostCSS is also used for all files for CSS minification (plugin `cssnano`), including target browser compatibility (via the browser list).
 
