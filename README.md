@@ -82,9 +82,8 @@ function makeSASS() {
 }
 
 // clean dist task
-async function cleanDist(cb) {
+async function cleanDist() {
   await deleteAsync(["dist"]);
-  cb();
 }
 
 export const css = series(cleanDist, makeCSS);

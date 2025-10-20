@@ -84,12 +84,9 @@ export function pscss(options = {}) {
                 callback(null, file);
             }
             catch (err) {
-                const error = new PluginError('pscss', 'Error!\n', {
-                    message: err.message,
-                    stack: err.stack,
-                    fileName: file.path,
-                });
+                const error = new PluginError('pscss', err, { fileName: file.path });
                 callback(error);
+                throw error;
             }
         }
     };

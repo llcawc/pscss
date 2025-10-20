@@ -100,12 +100,9 @@ export function pscss(
 
         callback(null, file)
       } catch (err) {
-        const error = new PluginError('pscss', 'Error!\n', {
-          message: (err as Error).message,
-          stack: (err as Error).stack,
-          fileName: file.path,
-        })
+        const error = new PluginError('pscss', err as Error, { fileName: file.path })
         callback(error)
+        throw error
       }
     }
   }
