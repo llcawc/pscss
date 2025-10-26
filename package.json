@@ -1,6 +1,6 @@
 {
   "name": "@pasmurno/pscss",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Gulp plugin for simple processing of sass styles and modern css style",
   "keywords": [
     "gulp",
@@ -30,7 +30,7 @@
   ],
   "scripts": {
     "format": "prettier --write .",
-    "pretti": "prettier --check .",
+    "prettier": "prettier --check .",
     "lint": "eslint ./ts",
     "fix": "eslint ./ts --fix ",
     "tsc": "tsc -p ./ts"

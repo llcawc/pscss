@@ -3,7 +3,7 @@ import PluginError from 'plugin-error';
 /**
  * Gulp plugin for rename file - change extname or/and added suffix
  * @param basename - new file name
- * @param extname - new file extersion
+ * @param extname - new file extension
  * @param suffix - new file suffix
  */
 export default function rename({ basename = undefined, extname = undefined, suffix = undefined, } = {}) {

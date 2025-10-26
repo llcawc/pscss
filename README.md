@@ -1,119 +1,218 @@
 # @pasmurno/pscss
 
-Gulp plugin for simple processing of sass styles and modern css style.
+A powerful Gulp plugin for processing Sass/SCSS styles and modern CSS with built-in optimization and purging capabilities.
 
-Files with the extensions `.css, .scss, .sass, .pcss` are supported. It is also possible to process files of the Bootsrtap 5.3.. versions framework (sass version 1.78.0 was used here to eliminate the warning).
+## ✨ Features
 
-## install:
+- **Multi-format support**: `.css`, `.scss`, `.sass`, `.pcss` files
+- **Sass compilation**: Uses Embedded Sass Host (Dart Sass) for fast compilation
+- **PostCSS processing**: Modern CSS features with autoprefixer and nested rules
+- **CSS optimization**: Built-in minification with cssnano
+- **Unused CSS removal**: PurgeCSS integration for smaller bundles
+- **Source maps**: Full source map support for debugging
+- **Bootstrap compatibility**: Optimized for Bootstrap 5.3+ (Sass 1.78.0)
+- **Security**: Built-in protection against DoS attacks (10MB file size limit)
 
-```
+## 📦 Installation
+
+```bash
 npm install --save-dev @pasmurno/pscss
 ```
 
-## options:
+## ⚙️ Configuration Options
 
-```js
-options?: {
-    minify?: boolean | undefined // minify CSS files (default: true)
-    presetEnv?: boolean | undefined // allows you to use future CSS features today (default: false)
-    purgeCSSoptions?: UserDefinedOptions | undefined // remove unused CSS from file
-    loadPaths?: string[] | undefined // paths for files to imports for SASS/SCSS compiler
+```typescript
+interface PscssOptions {
+  minify?: boolean; // Minify CSS files (default: true)
+  presetEnv?: boolean; // Use future CSS features today (default: false)
+  purgeCSSoptions?: UserDefinedOptions; // Remove unused CSS from file
+  loadPaths?: string[]; // Paths for SASS/SCSS imports
 }
 ```
 
-### sample:
+## 🚀 Usage Examples
 
-```js
-// import modules
-import { dest, series, src } from "gulp";
+### Basic CSS Processing
+
+```javascript
+import { dest, src } from "gulp";
 import { pscss, rename } from "@pasmurno/pscss";
 
-// css task
-function makeCSS() {
-  return src(["src/css/style.css"], { sourcemaps: true })
+function css() {
+  return src(["src/styles/main.css"], { sourcemaps: true })
     .pipe(pscss())
-    .pipe(rename({ basename: "main.css" }))
-    .pipe(dest("dist/css", { sourcemaps: true })); // for internal map
+    .pipe(rename({ suffix: ".min", extname: ".css" }))
+    .pipe(dest("dist/css", { sourcemaps: true }));
 }
 
-// pcss task
-function makePCSS() {
-  return src(["src/pcss/style.pcss"], { sourcemaps: true })
+export { css };
+```
+
+### SCSS with PurgeCSS
+
+```javascript
+function scss() {
+  return src(["src/scss/main.scss"], { sourcemaps: true })
     .pipe(
       pscss({
+        minify: true,
         purgeCSSoptions: {
-          content: ["src/assets/include/css/*.html", "src/assets/scripts/main.js"],
+          content: ["src/**/*.html", "src/**/*.js", "src/**/*.tsx", "src/**/*.vue"],
+          fontFace: true, // Remove unused @font-face
+          keyframes: true, // Remove unused @keyframes
+          variables: true, // Remove unused CSS variables
+          safelist: [/^show/, /^fade/, /^modal/], // Keep these selectors
         },
       }),
     )
-    .pipe(rename({ basename: "main.css" }))
-    .pipe(dest("dist/css", { sourcemaps: "." })); // for external map
-}
-
-// scss task
-function makeSCSS() {
-  return src(["src/scss/style.scss"], { sourcemaps: true })
-    .pipe(
-      pscss({
-        purgeCSSoptions: {
-          content: [
-            "src/assets/include/sass/*.html",
-            "src/assets/scripts/script.js",
-            "node_modules/bootstrap/js/dist/dom/*.js",
-            "node_modules/bootstrap/js/dist/dropdown.js",
-          ],
-          fontFace: true, // remove unused font-face
-          keyframes: true, // remove unused keyframes
-          variables: true, // remove unused variables
-          safelist: [/^show/],
-        },
-      }),
-    )
-    .pipe(rename({ basename: "main.css" }))
+    .pipe(rename({ suffix: ".min" }))
     .pipe(dest("dist/css", { sourcemaps: "." }));
 }
 
-// sass task
-function makeSASS() {
-  return src(["src/sass/style.sass"])
-    .pipe(pscss())
-    .pipe(rename({ basename: "main.css" }))
-    .pipe(dest("dist/css"));
+export { scss };
+```
+
+### PostCSS Preset Env
+
+```javascript
+function modernCSS() {
+  return src(["src/css/modern.css"], { sourcemaps: true })
+    .pipe(
+      pscss({
+        presetEnv: true, // Use postcss-preset-env instead of autoprefixer
+        minify: false,
+      }),
+    )
+    .pipe(dest("dist/css", { sourcemaps: true }));
 }
 
-// clean dist task
-async function cleanDist() {
+export { modernCSS };
+```
+
+### Custom Load Paths for Sass
+
+```javascript
+function sassWithPaths() {
+  return src(["src/sass/main.sass"], { sourcemaps: true })
+    .pipe(
+      pscss({
+        loadPaths: ["src/sass", "node_modules/bootstrap/scss", "node_modules/@fortawesome/fontawesome-free/scss"],
+      }),
+    )
+    .pipe(dest("dist/css", { sourcemaps: true }));
+}
+
+export { sassWithPaths };
+```
+
+### Complete Gulpfile Example
+
+```javascript
+import { dest, src, series, parallel } from "gulp";
+import { pscss, rename } from "@pasmurno/pscss";
+import { deleteAsync } from "del";
+
+// Clean task
+async function clean() {
   await deleteAsync(["dist"]);
 }
 
-export const css = series(cleanDist, makeCSS);
-export const pcss = series(cleanDist, makePCSS);
-export const scss = series(cleanDist, makeSCSS);
-export const sass = series(cleanDist, makeSASS);
+// CSS task
+function css() {
+  return src(["src/css/*.css"], { sourcemaps: true })
+    .pipe(pscss())
+    .pipe(dest("dist/css", { sourcemaps: true }));
+}
+
+// SCSS task with optimization
+function scss() {
+  return src(["src/scss/*.scss"], { sourcemaps: true })
+    .pipe(
+      pscss({
+        purgeCSSoptions: {
+          content: ["src/**/*.{html,js,tsx,vue}"],
+          safelist: [/^show/, /^fade/],
+        },
+      }),
+    )
+    .pipe(rename({ suffix: ".min" }))
+    .pipe(dest("dist/css", { sourcemaps: "." }));
+}
+
+// Export tasks
+export const build = series(clean, parallel(css, scss));
+export const watch = () => {
+  // Add your watch tasks here
+};
 ```
 
-### How it works
+## 🔧 How It Works
 
-The plugin uses the [Embedded Sass Host](https://www.npmjs.com/package/sass-embedded) (Dart SASS as `sass-embedded`) compiler for sass/scss files.
+### Sass/SCSS Processing
 
-[PostCSS](https://github.com/postcss/postcss) is used as default with the `postcss-import`, `postcss-nested` and `autoprefixer` plugins to support importing CSS fragments for css/pcss files, to unwraps nested rules the way Sass does and to add vendor prefixes, using data from Can I Use.
+- Uses [Embedded Sass Host](https://www.npmjs.com/package/sass-embedded) (Dart Sass)
+- Supports both `.scss` and `.sass` syntax
+- Automatic source map generation
+- Custom load paths for imports
 
-However, if the "presetEnv" option is enabled, only the `postcss-import` and `postcss-preset-env` plugins are used to support importing CSS fragments, new style standards and target browsers.
+### PostCSS Processing
 
-PostCSS is also used for all files for CSS minification (plugin `cssnano`), including target browser compatibility (via the browser list).
+**Default plugins** (when `presetEnv: false`):
 
-### Remove Unused CSS
+- `postcss-import` - Import CSS fragments
+- `postcss-nested` - Unwrap nested rules like Sass
+- `autoprefixer` - Add vendor prefixes
 
-To support the removal of unused styles, the [PurgeCSS](https://purgecss.com/) plugin is used (config option `purgeCSSoptions`). You can create a configuration for PurgeCSS use [this](https://purgecss.com/configuration.html) docunentation.
+**Preset Env plugins** (when `presetEnv: true`):
 
-### Source Map
+- `postcss-import` - Import CSS fragments
+- `postcss-preset-env` - Use future CSS features today
 
-The plugin generates/updates source code maps for debugging (uses gulp functions `src` and `dest` options).
+**Optional plugins**:
 
-### Rename files
+- `cssnano` - CSS minification (when `minify: true`)
+- `purgeCSSPlugin` - Remove unused CSS (when `purgeCSSoptions` provided)
 
-If you need to rename a file, you can import the gulp "rename" function from `@pasmurno/pscss`
+### CSS Optimization
 
----
+- **Minification**: Uses cssnano with optimized settings
+- **PurgeCSS**: Remove unused CSS based on content analysis
+- **Source Maps**: Full debugging support
+- **Security**: 10MB file size limit to prevent DoS attacks
 
-MIT License ©2025 by pasmurno from [llcawc](https://github.com/llcawc). Made with <span style="color:red;">❤</span> to beautiful architecture.
+## 📁 File Renaming
+
+The plugin includes a `rename` utility for flexible file naming:
+
+```javascript
+import { rename } from "@pasmurno/pscss";
+
+// Change basename
+.pipe(rename({ basename: "main" }))
+
+// Add suffix
+.pipe(rename({ suffix: ".min" }))
+
+// Change extension
+.pipe(rename({ extname: ".css" }))
+
+// Combine options
+.pipe(rename({ basename: "main", suffix: ".min", extname: ".css" }))
+```
+
+## 🛡️ Security Features
+
+- **File size validation**: Prevents processing files larger than 10MB
+- **Stream rejection**: Only processes buffer files, not streams
+- **Partial file skipping**: Automatically skips Sass partials (files starting with `_`)
+
+## 📊 Performance
+
+- **Fast compilation**: Uses Dart Sass for optimal performance
+- **Memory efficient**: Processes files in streams
+- **Parallel processing**: Supports Gulp's parallel task execution
+- **Smart caching**: Leverages PostCSS and Sass caching mechanisms
+
+## 📄 License
+
+MIT License ©2025 by [llcawc](https://github.com/llcawc) (pasmurno). Made with <span style="color:red;">❤</span> for beautiful architecture.

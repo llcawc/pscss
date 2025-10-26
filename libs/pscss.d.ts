@@ -4,11 +4,11 @@ import rename from './rename.js';
 export { rename };
 /**
  * Gulp plugin for simple processing of sass styles and modern css style.
- * @param options - optons {}
+ * @param options - options {}
  * @param options.minify minify CSS files
  * @param options.presetEnv allows you to use future CSS features today
- * @param option.loadPaths paths for files to imports for SASS/SCSS compiler
- * @param option.purgeCSSoptions remove unused CSS from file - options PurgeCSS
+ * @param options.loadPaths paths for files to imports for SASS/SCSS compiler
+ * @param options.purgeCSSoptions remove unused CSS from file - options PurgeCSS
  * @returns object stream.
  *
  * @example
@@ -39,8 +39,8 @@ export { rename };
  * ```
  */
 export declare function pscss(options?: {
-    minify?: boolean | undefined;
-    presetEnv?: boolean | undefined;
-    purgeCSSoptions?: UserDefinedOptions | undefined;
-    loadPaths?: string[] | undefined;
+    minify?: boolean;
+    presetEnv?: boolean;
+    purgeCSSoptions?: UserDefinedOptions;
+    loadPaths?: string[];
 }): Transform;

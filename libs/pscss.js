@@ -15,11 +15,11 @@ import rename from './rename.js';
 export { rename };
 /**
  * Gulp plugin for simple processing of sass styles and modern css style.
- * @param options - optons {}
+ * @param options - options {}
  * @param options.minify minify CSS files
  * @param options.presetEnv allows you to use future CSS features today
- * @param option.loadPaths paths for files to imports for SASS/SCSS compiler
- * @param option.purgeCSSoptions remove unused CSS from file - options PurgeCSS
+ * @param options.loadPaths paths for files to imports for SASS/SCSS compiler
+ * @param options.purgeCSSoptions remove unused CSS from file - options PurgeCSS
  * @returns object stream.
  *
  * @example
@@ -67,26 +67,31 @@ export function pscss(options = {}) {
             return;
         }
         if (file.isBuffer()) {
+            // Validate file size (prevent DoS attacks)
+            const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+            if (file.contents.length > MAX_FILE_SIZE) {
+                callback(new PluginError('pscss', 'File too large'));
+                return;
+            }
             const minify = options.minify ?? true;
             const presetEnv = options.presetEnv ?? false;
             const loadPaths = options.loadPaths ?? [file.base, join(file.cwd, 'node_modules')];
-            const sourceMap = file.sourceMap ? true : false;
+            const sourceMap = !!file.sourceMap;
             const extname = file.extname.split('.').pop()?.toLowerCase() ?? '';
             let prevSourceMap = false;
             try {
                 // run sass compiler for sass or scss files
                 if (/^(scss|sass)$/i.test(extname)) {
                     await sass(file, loadPaths, sourceMap);
-                    prevSourceMap = sourceMap ? true : false;
+                    prevSourceMap = sourceMap;
                 }
                 // run postcss
                 await post(file, minify, presetEnv, options.purgeCSSoptions, sourceMap, prevSourceMap);
                 callback(null, file);
             }
             catch (err) {
-                const error = new PluginError('pscss', err, { fileName: file.path });
-                callback(error);
-                throw error;
+                const error = err;
+                throw new PluginError('pscss', error, { fileName: file.path, showStack: true });
             }
         }
     };
@@ -96,8 +101,8 @@ export function pscss(options = {}) {
 async function post(file, minify, presetEnv, purgeCSSoptions, sourceMap, prevSourceMap) {
     if (file.isBuffer()) {
         try {
-            const isPresetEnv = presetEnv ? true : false;
-            const isPurge = purgeCSSoptions ? true : false;
+            const isPresetEnv = presetEnv;
+            const isPurge = !!purgeCSSoptions;
             const prevMap = prevSourceMap ? file.sourceMap : false;
             const mapOptions = { inline: false, annotation: false, prev: prevMap };
             const css = new TextDecoder().decode(file.contents);
@@ -111,6 +116,9 @@ async function post(file, minify, presetEnv, purgeCSSoptions, sourceMap, prevSou
             }
             // include PurgeCSS
             if (isPurge) {
+                if (typeof purgeCSSoptions !== 'object') {
+                    throw new Error('Error! Postcss compiler: Check the type PurgeCSS options.');
+                }
                 postcssPlugins.push(purgeCSSPlugin(purgeCSSoptions));
             }
             // include cssnano
@@ -139,7 +147,7 @@ async function post(file, minify, presetEnv, purgeCSSoptions, sourceMap, prevSou
         }
         catch (err) {
             const error = err;
-            throw new Error(`Error! Postcss compiler: ${error.message}`);
+            throw new PluginError('pscss', error, { message: error.message });
         }
     }
 }
@@ -164,7 +172,7 @@ async function sass(file, loadPaths, sourceMap) {
         }
         catch (err) {
             const error = err;
-            throw new Error(`Error! Sass compiler: ${error.message}`);
+            throw new PluginError('pscss', error, { message: 'Error! Sass compiler: ' + error.message });
         }
     }
 }

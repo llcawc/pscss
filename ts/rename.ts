@@ -5,7 +5,7 @@ import File from 'vinyl'
 /**
  * Gulp plugin for rename file - change extname or/and added suffix
  * @param basename - new file name
- * @param extname - new file extersion
+ * @param extname - new file extension
  * @param suffix - new file suffix
  */
 
