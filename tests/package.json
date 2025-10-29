@@ -1,0 +1,19 @@
+{
+  "name": "pscss-test",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "test": "gulp css"
+  },
+  "devDependencies": {
+    "@pasmurno/serve": "^0.0.4",
+    "@types/bootstrap": "^5.2.10",
+    "@types/gulp": "^4.0.18",
+    "@types/node": "^24.9.1",
+    "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.13.1",
+    "del": "^8.0.1",
+    "gulp": "^5.0.1",
+    "tscom": "^0.0.7"
+  }
+}

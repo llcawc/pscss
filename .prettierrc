@@ -5,7 +5,7 @@
   "printWidth": 120,
   "overrides": [
     {
-      "files": ["./**/*.{ts,js,jsx,mjs,cjs}"],
+      "files": ["./**/*.{ts,tsx,js,jsx,mjs,cjs}"],
       "options": {
         "semi": false,
         "singleQuote": true,

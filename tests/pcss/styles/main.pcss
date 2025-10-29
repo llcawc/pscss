@@ -1,0 +1,36 @@
+/* main.pcss */
+@import "style.pcss";
+@import "fonts.pcss";
+@import "bootstrap-icons.pcss";
+@import "scheme.pcss";
+/* custom code */
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+@media (width < 640px) {
+  .footer {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+.btn {
+  display: inline-flex;
+  gap: 0 4px;
+  align-items: center;
+
+  padding: 8px 24px;
+  border: 1px solid var(--links);
+  border-radius: 6px;
+
+  transition: 200ms ease;
+
+  &:hover {
+    color: white;
+    text-decoration: none;
+    background-color: var(--links);
+  }
+}

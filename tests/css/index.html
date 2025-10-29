@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="lib/prism.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <script defer src="lib/prism.js"></script>
+  <script defer src="js/main.js"></script>
+  <title>MyApp</title>
+</head>
+
+<body>
+  <div id="app">
+    <h1>Tailwind Typography Plugin</h1>
+    <p><a href="post.html"><button>post</button></a></p>
+    <p>Until now, trying to style an article, document, or blog post with Tailwind has been a very
+      tedious task.</p>
+
+    <p>The <code>@tailwindcss/typography</code> plugin is our attempt to give you what you <em>actually</em> want, without any of the downsides of doing something stupid like disabling our base styles.</p>
+    <blockquote>
+      <p>Why is Tailwind removing the default styles on my <code>h1</code> elements? How do I disable this? What do you mean I lose all the other base styles too?</p>
+    </blockquote>
+    <div>
+      <h2>Shouldn't be colored</h2>
+    </div>
+    <pre><code class="language-html">&lt;p class="mb-4"&gt;
+  But a recent &lt;a href="../main"&gt;study shows&lt;/a&gt; that the celebrated
+  appetizer may be linked to a series of rabies cases
+  springing up around the country.
+&lt;/p&gt;
+</code></pre>
+    <p>For more information about how to use the plugin and the features it includes, <a href="https://github.com/tailwindcss/typography/blob/main/README.md">read the documentation</a>.</p>
+    <hr>
+    <h2>This is a heading</h2>
+    <ol>
+      <li>We want everything to look good out of the box.</li>
+      <li>Really just the first reason, that's the whole point of the plugin.</li>
+      <li>Here's a third pretend reason though a list with three items looks more realistic than a list with two items.</li>
+    </ol>
+    <p>Now <strong>I'm going to show you</strong> an example of an unordered list to make sure that looks good, too:</p>
+    <ul>
+      <li>So here is the first item in this list.</li>
+      <li>In this example we're keeping the items short.</li>
+      <li>Later, we'll use longer, more complex list items.</li>
+    </ul>
+    <p>Let's even style a table:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Wrestler</th>
+          <th>Origin</th>
+          <th>Finisher</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Bret "The Hitman" Hart</td>
+          <td>Calgary, AB</td>
+          <td>Sharpshooter</td>
+        </tr>
+        <tr>
+          <td>Stone Cold Steve Austin</td>
+          <td>Austin, TX</td>
+          <td>Stone Cold Stunner</td>
+        </tr>
+        <tr>
+          <td>Randy Savage</td>
+          <td>Sarasota, FL</td>
+          <td>Elbow Drop</td>
+        </tr>
+        <tr>
+          <td>Vader</td>
+          <td>Boulder, CO</td>
+          <td>Vader Bomb</td>
+        </tr>
+        <tr>
+          <td>Razor Ramon</td>
+          <td>Chuluota, FL</td>
+          <td>Razor's Edge</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Finally, a figure with a caption:</p>
+    <figure>
+      <img alt="" src="https://wallpaper.forfun.com/fetch/97/97bbca4a488a11c0b2e40433122fcf4d.jpeg">
+      <figcaption>
+        Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of
+        classical Latin literature from 45 BC, making it over 2000 years old.
+      </figcaption>
+    </figure>
+    <p>And that's the end of our little demo.</p>
+    <footer>
+      <button class="color-switcher"></button>
+      <p>Copyright &copy;2025 pasmurno by llcawc, made with <span style="color: red">❤</span> to beautiful architecture</p>
+    </footer>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,89 @@
+/* color mode switcher */
+:root {
+  --cm-color: #232429;
+  --cm-bg: rgb(240 240 240 / 50%);
+  --cm-bg-hover: rgb(240 240 240 / 90%);
+  --cm-focus: transparent;
+}
+
+.dark {
+  --cm-color: #c9c9cf;
+  --cm-bg: rgb(255 255 255 / 6%);
+  --cm-bg-hover: rgb(255 255 255 / 14%);
+  --cm-focus: transparent;
+}
+
+.color-switcher {
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 28px;
+  min-width: 28px;
+  height: 28px;
+  max-height: 28px;
+  margin: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+
+  background: var(--cm-bg);
+  box-shadow: none;
+
+  transition: all 0.25s;
+}
+@media not (width >= 480px) {
+  .color-switcher {
+    width: 36px;
+    min-width: 36px;
+    height: 36px;
+    max-height: 36px;
+  }
+}
+
+.color-switcher:hover {
+  background: var(--cm-bg-hover);
+}
+
+.color-switcher:focus,
+.color-switcher:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 2px var(--cm-focus);
+}
+
+.color-switcher svg {
+  display: block;
+
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  padding: 0;
+
+  fill: var(--cm-color);
+}
+@media not (width >= 480px) {
+  .color-switcher svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+footer {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 1rem;
+}
+
+footer p {
+  margin: 0;
+}
+@media not (width >= 650px) {
+  footer {
+    align-items: start;
+  }
+}
