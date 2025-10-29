@@ -3,7 +3,7 @@
 /.osp/
 /dist/
 /node_modules/
-/**/debug.log
+/**/*.log
 /**/yarn.lock
 /**/pnpm-lock.yaml
 /**/package-lock.json
