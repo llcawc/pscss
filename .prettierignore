@@ -1,5 +1,0 @@
-# Ignore files:
-**/dist/**/*.*
-**/public/**/*.*
-**/vendor/**/*.*
-libs/**/*.*

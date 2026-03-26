@@ -45,7 +45,7 @@ function switcher() {
     const activeThemeIcon = document.querySelector('.theme-icon-active use')
 
     if (!themeSwitcher || !btnToActive || !svgOfActive || !svgOfActiveBtn || !activeThemeIcon) {
-      return console.error(`Селектор не найден! `)
+      throw new Error(`Селектор не найден! `)
     }
 
     document.querySelectorAll('[data-theme-value]').forEach((element) => {

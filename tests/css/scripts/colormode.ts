@@ -42,38 +42,53 @@ function colorSwitcher() {
 
   // определяем функцию показа нужной svg картинки в кнопке переключателя тем
   function showThemeIcon(elem: Element, theme: Tmode) {
-    if (theme === 'light') elem.innerHTML = svgLight
-    if (theme === 'dark') elem.innerHTML = svgDark
+    if (theme === 'light') {
+      elem.innerHTML = svgLight
+    }
+    if (theme === 'dark') {
+      elem.innerHTML = svgDark
+    }
   }
 
   // сперва настроим тему при первом запуске
   const usedTheme = getPreferredTheme() // смотрим в систему
   setTheme(usedTheme) // определяем и устанавливаем тему на странице
 
-  // взять переключатель в DOM с селектором 'color-switcher'
-  const colorSwicher = document.querySelector('.color-switcher')
-  if (colorSwicher) {
-    // отображаем картинку текущей темы
-    showThemeIcon(colorSwicher, usedTheme)
+  // добавляем на страницу кнопку переключателя тем
+  // const colorSwicher = document.createElement('button')
+  // colorSwicher.classList.add('color-switcher')
+  // document.body.append(colorSwicher)
 
-    // вешаем на кнопку переключателя слушатель событий и ждем клика - затем меняем тему
-    colorSwicher.addEventListener('click', () => {
-      // считываем код первого элемента в кнопке и значение атрибута "data-mode"
-      const currentMode =
-        colorSwicher.firstElementChild?.attributes.getNamedItem('data-mode')?.value ?? getPreferredTheme()
+  // проверяем наличие кнопки переключателя тем на странице, если ее нет - создаем и добавляем
+  let colorSwicher: HTMLButtonElement | null = document.querySelector('button.color-switcher')
+  if (!colorSwicher) {
+    colorSwicher = document.createElement('button')
+    colorSwicher.classList.add('color-switcher')
+    document.body.append(colorSwicher)
+  }
 
-      // меняем тему
-      const theme: Tmode = currentMode === 'light' ? 'dark' : 'light'
-      setTheme(theme)
-      showThemeIcon(colorSwicher, theme)
-      setStoredTheme(theme)
-    })
-  } else console.error('Не найден элемент "button" с классом "color-switcher"!')
+  // отображаем картинку текущей темы
+  showThemeIcon(colorSwicher, usedTheme)
+
+  // вешаем на кнопку переключателя слушатель событий и ждем клика - затем меняем тему
+  colorSwicher.addEventListener('click', () => {
+    // считываем код первого элемента в кнопке и значение атрибута "data-mode"
+    const currentMode =
+      colorSwicher.firstElementChild?.attributes.getNamedItem('data-mode')?.value ?? getPreferredTheme()
+
+    // меняем тему
+    const theme: Tmode = currentMode === 'light' ? 'dark' : 'light'
+    setTheme(theme)
+    showThemeIcon(colorSwicher, theme)
+    setStoredTheme(theme)
+  })
 
   // вешаем слушатель событий на медиа цветовой схемы системы
   list.addEventListener('change', () => {
     removeStoredTheme()
-    setTheme(getPreferredTheme())
+    const theme = getPreferredTheme()
+    setTheme(theme)
+    showThemeIcon(colorSwicher, theme)
   })
 }
 

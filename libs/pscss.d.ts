@@ -1,5 +1,5 @@
-import { UserDefinedOptions } from '@fullhuman/postcss-purgecss';
 import { Transform } from 'node:stream';
+import { type UserDefinedOptions } from '@fullhuman/postcss-purgecss';
 import rename from './rename.js';
 export { rename };
 /**

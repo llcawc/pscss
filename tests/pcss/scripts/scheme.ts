@@ -43,7 +43,7 @@ function schemeSwitcher() {
   const switcherRadios = document.querySelectorAll('.ui-radio')
   // проверить наличие кнопок переключателя тем на странице
   if (switcherRadios.length === 0) {
-    console.log('The node ".ui-radio" is missing! ')
+    throw new Error('The node ".ui-radio" is missing! ')
     return
   }
 
@@ -52,7 +52,7 @@ function schemeSwitcher() {
     const targetRadio = document.querySelector(`.ui-radio[data-ui-value=${theme}]`)
     // проверить наличие целевой кнопки переключателя тем на странице
     if (targetRadio === null) {
-      console.log(`The node ".ui-radio[data-ui-value=${theme}]" is missing! `)
+      throw new Error(`The node ".ui-radio[data-ui-value=${theme}]" is missing! `)
       return
     }
     // сбросить все кнопки переключателя тем на странице

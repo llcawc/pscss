@@ -1,6 +1,8 @@
+import type File from 'vinyl'
+
 import { Transform } from 'node:stream'
+
 import PluginError from 'plugin-error'
-import File from 'vinyl'
 
 /**
  * Gulp plugin for rename file - change extname or/and added suffix

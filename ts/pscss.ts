@@ -1,18 +1,20 @@
-import { purgeCSSPlugin, UserDefinedOptions } from '@fullhuman/postcss-purgecss'
-import autoprefixer from 'autoprefixer'
-import cssnano from 'cssnano'
+import type { RawSourceMap } from 'source-map'
+import type File from 'vinyl'
+
 import { Buffer } from 'node:buffer'
 import { join, relative } from 'node:path'
 import { Transform } from 'node:stream'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+
+import purgeCSSPlugin, { type UserDefinedOptions } from '@fullhuman/postcss-purgecss'
+import autoprefixer from 'autoprefixer'
+import cssnano from 'cssnano'
 import PluginError from 'plugin-error'
 import postcss from 'postcss'
 import atImport from 'postcss-import'
 import postcssNested from 'postcss-nested'
 import postcssPresetEnv from 'postcss-preset-env'
 import { compileStringAsync } from 'sass-embedded'
-import { RawSourceMap } from 'source-map'
-import File from 'vinyl'
 
 import rename from './rename.js'
 export { rename }
@@ -58,7 +60,7 @@ export function pscss(
     presetEnv?: boolean
     purgeCSSoptions?: UserDefinedOptions
     loadPaths?: string[]
-  } = {}
+  } = {},
 ) {
   const stream = new Transform({ objectMode: true })
 
@@ -122,7 +124,7 @@ async function post(
   presetEnv: boolean,
   purgeCSSoptions: UserDefinedOptions | undefined,
   sourceMap: boolean,
-  prevSourceMap: boolean
+  prevSourceMap: boolean,
 ) {
   if (file.isBuffer()) {
     try {
@@ -160,7 +162,7 @@ async function post(
                 mergeLonghand: false, // Preserve longhand for better readability
               },
             ],
-          })
+          }),
         )
       }
 
