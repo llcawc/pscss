@@ -1,25 +1,46 @@
 Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
-const require_rename = require("./rename-Cwf9UZiV.cjs");
+//#region \0rolldown/runtime.js
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __copyProps = (to, from, except, desc) => {
+	if (from && typeof from === "object" || typeof from === "function") for (var keys = __getOwnPropNames(from), i = 0, n = keys.length, key; i < n; i++) {
+		key = keys[i];
+		if (!__hasOwnProp.call(to, key) && key !== except) __defProp(to, key, {
+			get: ((k) => from[k]).bind(null, key),
+			enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
+		});
+	}
+	return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", {
+	value: mod,
+	enumerable: true
+}) : target, mod));
+//#endregion
 let node_buffer = require("node:buffer");
 let node_path = require("node:path");
 let node_stream = require("node:stream");
 let node_url = require("node:url");
 let _fullhuman_postcss_purgecss = require("@fullhuman/postcss-purgecss");
-_fullhuman_postcss_purgecss = require_rename.__toESM(_fullhuman_postcss_purgecss);
+_fullhuman_postcss_purgecss = __toESM(_fullhuman_postcss_purgecss);
 let autoprefixer = require("autoprefixer");
-autoprefixer = require_rename.__toESM(autoprefixer);
+autoprefixer = __toESM(autoprefixer);
 let cssnano = require("cssnano");
-cssnano = require_rename.__toESM(cssnano);
+cssnano = __toESM(cssnano);
 let plugin_error = require("plugin-error");
-plugin_error = require_rename.__toESM(plugin_error);
+plugin_error = __toESM(plugin_error);
 let postcss = require("postcss");
-postcss = require_rename.__toESM(postcss);
+postcss = __toESM(postcss);
 let postcss_import = require("postcss-import");
-postcss_import = require_rename.__toESM(postcss_import);
+postcss_import = __toESM(postcss_import);
 let postcss_nested = require("postcss-nested");
-postcss_nested = require_rename.__toESM(postcss_nested);
+postcss_nested = __toESM(postcss_nested);
 let postcss_preset_env = require("postcss-preset-env");
-postcss_preset_env = require_rename.__toESM(postcss_preset_env);
+postcss_preset_env = __toESM(postcss_preset_env);
 let sass_embedded = require("sass-embedded");
 //#region src/pscss.ts
 /**
@@ -163,6 +184,35 @@ function cleanSourceMap(file, map) {
 	});
 	file.sourceMap = map;
 }
+/**
+* Gulp plugin for rename file - change extname or/and added suffix
+* @param basename - new file name (file stem and file extension)
+* @param extname - new file extension
+* @param suffix - new file suffix
+*/
+function rename({ basename = void 0, extname = void 0, suffix = void 0 } = {}) {
+	const stream = new node_stream.Transform({ objectMode: true });
+	stream._transform = async (sameFile, _enc, callback) => {
+		if (sameFile.isNull()) return callback(null, sameFile);
+		if (sameFile.isBuffer()) try {
+			const file = sameFile.clone({ contents: false });
+			if (basename) file.basename = basename;
+			const extName = file.extname;
+			if (suffix && extname) file.extname = suffix + extname;
+			else if (suffix && !extname) file.extname = suffix + extName;
+			else if (!suffix && extname) file.extname = extname;
+			if (file.sourceMap) file.sourceMap.file = file.relative;
+			callback(null, file);
+		} catch (err) {
+			throw new plugin_error.default("pscss", err, {
+				fileName: sameFile.path,
+				showStack: true
+			});
+		}
+		else callback(null, sameFile);
+	};
+	return stream;
+}
 //#endregion
 exports.pscss = pscss;
-exports.rename = require_rename.rename;
+exports.rename = rename;

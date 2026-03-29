@@ -88,7 +88,7 @@ function modernCSS() {
         minify: false,
       }),
     )
-    .pipe(dest("dist/css", { sourcemaps: "." })); // For write the sourcemap file here
+    .pipe(dest("dist/css", { sourcemaps: true }));
 }
 
 export { modernCSS };
@@ -108,7 +108,7 @@ function sassWithPaths() {
         ],
       }),
     )
-    .pipe(dest("dist/css", { sourcemaps: true })); // For insert a sourcemap to the file
+    .pipe(dest("dist/css", { sourcemaps: true }));
 }
 
 export { sassWithPaths };
@@ -196,7 +196,7 @@ The plugin includes a `rename` utility for flexible file naming:
 ```javascript
 import { rename } from "@pasmurno/pscss";
 
-// Change basename (file stem and file extension, or without file extension)
+// Change basename (file stem and file extension, or without file extersion)
 .pipe(rename({ basename: "main.css" }))
 
 // Add suffix

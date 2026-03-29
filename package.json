@@ -25,16 +25,12 @@
     "README.md"
   ],
   "type": "module",
-  "main": "./dist/pscss.js",
-  "types": "./dist/pscss.d.ts",
+  "main": "./dist/pscss.cjs",
+  "types": "./dist/pscss.d.cts",
   "exports": {
-    "./pscss": {
+    ".": {
       "import": "./dist/pscss.js",
       "require": "./dist/pscss.cjs"
-    },
-    "./rename": {
-      "import": "./dist/rename.js",
-      "require": "./dist/rename.cjs"
     },
     "./package.json": "./package.json"
   },
@@ -73,5 +69,6 @@
     "typescript": "^6.0.2",
     "vinyl": "^3.0.1",
     "vitest": "^4.1.2"
-  }
+  },
+  "module": "./dist/pscss.js"
 }

@@ -1,4 +1,3 @@
-import { rename } from "./rename.cjs";
 import { Transform } from "node:stream";
 import { UserDefinedOptions } from "@fullhuman/postcss-purgecss";
 
@@ -8,6 +7,11 @@ interface PscssOptions {
   presetEnv?: boolean | undefined;
   purgeCSSoptions?: UserDefinedOptions | undefined;
   loadPaths?: string[] | undefined;
+}
+interface RenameOptions {
+  basename?: string | undefined;
+  extname?: string | undefined;
+  suffix?: string | undefined;
 }
 /**
  * Gulp plugin for simple processing of sass styles and modern css style.
@@ -50,5 +54,16 @@ declare function pscss({
   purgeCSSoptions,
   loadPaths
 }?: PscssOptions): Transform;
+/**
+ * Gulp plugin for rename file - change extname or/and added suffix
+ * @param basename - new file name (file stem and file extension)
+ * @param extname - new file extension
+ * @param suffix - new file suffix
+ */
+declare function rename({
+  basename,
+  extname,
+  suffix
+}?: RenameOptions): Transform;
 //#endregion
-export { type PscssOptions, type UserDefinedOptions, pscss, rename };
+export { type PscssOptions, type RenameOptions, type UserDefinedOptions, pscss, rename };

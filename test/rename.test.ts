@@ -1,7 +1,7 @@
 import File from 'vinyl'
 import { describe, it, expect } from 'vitest'
 
-import { rename } from '../src/rename.js'
+import { rename } from '../src/pscss.js'
 
 describe('rename', () => {
   it('should rename file with basename', async () => {
