@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "ignorePatterns": ["libs/**", "node_modules/**", "tests/**"],
+  "ignorePatterns": ["dist/**", "node_modules/**", "tests/**"],
   "plugins": ["import", "typescript", "unicorn"],
   "env": {},
   "globals": {},
@@ -8,7 +8,7 @@
   "rules": {
     "eqeqeq": "error",
     "import/no-cycle": "error",
-    "no-console": "warn",
+    "no-console": "allow",
     "no-unused-vars": "warn",
     "prefer-const": "warn",
     "curly": ["error", "all"],

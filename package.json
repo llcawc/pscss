@@ -1,51 +1,54 @@
 {
   "name": "@pasmurno/pscss",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Gulp plugin for simple processing of sass styles and modern css style",
   "keywords": [
-    "gulp",
-    "optimize",
+    "bootstrap",
     "bundle",
-    "minify",
-    "purge",
-    "styles",
     "css",
+    "gulp",
+    "minify",
+    "optimize",
+    "pcss",
+    "purge",
     "sass",
     "scss",
-    "pcss",
-    "bootstrap"
+    "styles"
   ],
+  "homepage": "https://github.com/llcawc/pscss",
   "license": "MIT",
   "author": "llcawc",
-  "homepage": "https://github.com/llcawc/pscss",
-  "type": "module",
-  "main": "./libs/pscss.js",
-  "exports": "./libs/pscss.js",
-  "types": "./libs/pscss.d.ts",
   "files": [
-    "libs",
+    "dist",
     "package.json",
     "LICENSE",
     "README.md"
   ],
+  "type": "module",
+  "main": "./dist/pscss.js",
+  "types": "./dist/pscss.d.ts",
+  "exports": {
+    "./pscss": {
+      "import": "./dist/pscss.js",
+      "require": "./dist/pscss.cjs"
+    },
+    "./rename": {
+      "import": "./dist/rename.js",
+      "require": "./dist/rename.cjs"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
+    "test": "vitest",
     "lint": "oxlint",
     "fix": "oxlint --fix",
-    "fmt": "oxfmt",
     "check": "oxfmt --check",
-    "typecheck": "tsc -p ./ts --noEmit",
-    "validate": "oxlint && tsc -p ./ts --noEmit",
-    "tsc": "tsc -p ./ts"
-  },
-  "devDependencies": {
-    "@types/node": "^25.5.0",
-    "@types/postcss-import": "^14.0.3",
-    "@types/vinyl": "^2.0.12",
-    "oxfmt": "^0.42.0",
-    "oxlint": "^1.57.0",
-    "source-map": "^0.7.6",
-    "typescript": "^6.0.2",
-    "vinyl": "^3.0.1"
+    "fmt": "oxfmt",
+    "validate": "oxlint && tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "tsc": "tsc",
+    "dev": "tsdown --watch",
+    "build": "tsdown"
   },
   "dependencies": {
     "@fullhuman/postcss-purgecss": "^8.0.0",
@@ -57,5 +60,18 @@
     "postcss-nested": "^7.0.2",
     "postcss-preset-env": "^11.2.0",
     "sass-embedded": "1.78.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "@types/postcss-import": "^14.0.3",
+    "@types/vinyl": "^2.0.12",
+    "@typescript/native-preview": "7.0.0-dev.20260329.1",
+    "oxfmt": "^0.42.0",
+    "oxlint": "^1.57.0",
+    "source-map": "^0.7.6",
+    "tsdown": "^0.21.7",
+    "typescript": "^6.0.2",
+    "vinyl": "^3.0.1",
+    "vitest": "^4.1.2"
   }
 }

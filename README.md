@@ -57,7 +57,12 @@ function scss() {
       pscss({
         minify: true,
         purgeCSSoptions: {
-          content: ["src/**/*.html", "src/**/*.js", "src/**/*.tsx", "src/**/*.vue"],
+          content: [
+            "src/**/*.html",
+            "src/**/*.js",
+            "src/**/*.tsx",
+            "src/**/*.vue",
+          ],
           fontFace: true, // Remove unused @font-face
           keyframes: true, // Remove unused @keyframes
           variables: true, // Remove unused CSS variables
@@ -83,7 +88,7 @@ function modernCSS() {
         minify: false,
       }),
     )
-    .pipe(dest("dist/css", { sourcemaps: true }));
+    .pipe(dest("dist/css", { sourcemaps: "." })); // For write the sourcemap file here
 }
 
 export { modernCSS };
@@ -96,10 +101,14 @@ function sassWithPaths() {
   return src(["src/sass/main.sass"], { sourcemaps: true })
     .pipe(
       pscss({
-        loadPaths: ["src/sass", "node_modules/bootstrap/scss", "node_modules/@fortawesome/fontawesome-free/scss"],
+        loadPaths: [
+          "src/sass",
+          "node_modules/bootstrap/scss",
+          "node_modules/@fortawesome/fontawesome-free/scss",
+        ],
       }),
     )
-    .pipe(dest("dist/css", { sourcemaps: true }));
+    .pipe(dest("dist/css", { sourcemaps: true })); // For insert a sourcemap to the file
 }
 
 export { sassWithPaths };
@@ -187,8 +196,8 @@ The plugin includes a `rename` utility for flexible file naming:
 ```javascript
 import { rename } from "@pasmurno/pscss";
 
-// Change basename
-.pipe(rename({ basename: "main" }))
+// Change basename (file stem and file extension, or without file extension)
+.pipe(rename({ basename: "main.css" }))
 
 // Add suffix
 .pipe(rename({ suffix: ".min" }))
