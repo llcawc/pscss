@@ -164,7 +164,14 @@ async function sass(file, loadPaths, sourceMap) {
 			syntax: file.extname === ".sass" ? "indented" : "scss",
 			style: "expanded",
 			sourceMap,
-			sourceMapIncludeSources: true
+			sourceMapIncludeSources: true,
+			silenceDeprecations: [
+				"import",
+				"color-functions",
+				"global-builtin",
+				"legacy-js-api",
+				"if-function"
+			]
 		});
 		file.contents = node_buffer.Buffer.from(result.css);
 		file.extname = ".css";

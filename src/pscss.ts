@@ -217,6 +217,13 @@ async function sass(file: File, loadPaths: string[], sourceMap: boolean) {
         style: 'expanded',
         sourceMap: sourceMap,
         sourceMapIncludeSources: true,
+        silenceDeprecations: [
+          'import',
+          'color-functions',
+          'global-builtin',
+          'legacy-js-api',
+          'if-function'
+        ],
       })
 
       file.contents = Buffer.from(result.css)

@@ -1,6 +1,6 @@
 {
   "name": "@pasmurno/pscss",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Gulp plugin for simple processing of sass styles and modern css style",
   "keywords": [
     "bootstrap",
@@ -26,6 +26,7 @@
   ],
   "type": "module",
   "main": "./dist/pscss.cjs",
+  "module": "./dist/pscss.js",
   "types": "./dist/pscss.d.cts",
   "exports": {
     ".": {
@@ -35,7 +36,7 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "test": "vitest",
+    "test": "vitest --run",
     "lint": "oxlint",
     "fix": "oxlint --fix",
     "check": "oxfmt --check",
@@ -49,26 +50,25 @@
   "dependencies": {
     "@fullhuman/postcss-purgecss": "^8.0.0",
     "autoprefixer": "^10.4.27",
-    "cssnano": "^7.1.3",
+    "cssnano": "^7.1.4",
     "plugin-error": "^2.0.1",
     "postcss": "^8.5.8",
     "postcss-import": "^16.1.1",
     "postcss-nested": "^7.0.2",
     "postcss-preset-env": "^11.2.0",
-    "sass-embedded": "1.78.0"
+    "sass-embedded": "^1.99.0"
   },
   "devDependencies": {
-    "@types/node": "^25.5.0",
+    "@types/node": "^25.5.2",
     "@types/postcss-import": "^14.0.3",
     "@types/vinyl": "^2.0.12",
-    "@typescript/native-preview": "7.0.0-dev.20260329.1",
-    "oxfmt": "^0.42.0",
-    "oxlint": "^1.57.0",
+    "@typescript/native-preview": "7.0.0-dev.20260404.1",
+    "oxfmt": "^0.43.0",
+    "oxlint": "^1.58.0",
     "source-map": "^0.7.6",
     "tsdown": "^0.21.7",
     "typescript": "^6.0.2",
     "vinyl": "^3.0.1",
     "vitest": "^4.1.2"
-  },
-  "module": "./dist/pscss.js"
+  }
 }

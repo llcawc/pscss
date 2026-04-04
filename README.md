@@ -10,7 +10,7 @@ A powerful Gulp plugin for processing Sass/SCSS styles and modern CSS with built
 - **CSS optimization**: Built-in minification with cssnano
 - **Unused CSS removal**: PurgeCSS integration for smaller bundles
 - **Source maps**: Full source map support for debugging
-- **Bootstrap compatibility**: Optimized for Bootstrap 5.3+ (Sass 1.78.0)
+- **Bootstrap compatibility**: Optimized for Bootstrap 5.3+ (uses Dart SASS v.1.99.0)
 - **Security**: Built-in protection against DoS attacks (10MB file size limit)
 
 ## 📦 Installation
@@ -159,10 +159,11 @@ export const watch = () => {
 
 ### Sass/SCSS Processing
 
-- Uses [Embedded Sass Host](https://www.npmjs.com/package/sass-embedded) (Dart Sass)
+- Uses [Embedded Sass Host](https://www.npmjs.com/package/sass-embedded) (Dart Sass) version 1.99.0
 - Supports both `.scss` and `.sass` syntax
 - Automatic source map generation
 - Custom load paths for imports
+- **Deprecation warnings silenced**: The following deprecations are automatically silenced: `import`, `color-functions`, `global-builtin`, `legacy-js-api`, `if-function`
 
 ### PostCSS Processing
 
