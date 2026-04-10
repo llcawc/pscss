@@ -1,5 +1,6 @@
 import { Transform } from "node:stream";
 import { UserDefinedOptions } from "@fullhuman/postcss-purgecss";
+import { AcceptedPlugin } from "postcss";
 
 //#region src/pscss.d.ts
 interface PscssOptions {
@@ -7,6 +8,7 @@ interface PscssOptions {
   presetEnv?: boolean | undefined;
   purgeCSSoptions?: UserDefinedOptions | undefined;
   loadPaths?: string[] | undefined;
+  plugins?: AcceptedPlugin[] | undefined;
 }
 interface RenameOptions {
   basename?: string | undefined;
@@ -19,6 +21,7 @@ interface RenameOptions {
  * @param presetEnv allows you to use future CSS features today
  * @param loadPaths paths for files to imports for SASS/SCSS compiler
  * @param purgeCSSoptions remove unused CSS from file - options PurgeCSS
+ * @param plugins array of postcss plugins (can be empty, one, or multiple)
  * @returns object Transform stream.
  *
  * @example
@@ -27,6 +30,7 @@ interface RenameOptions {
  * // import modules
  * import { dest, src } from "gulp";
  * import { pscss, rename } from "@pasmurno/pscss";
+ * import postcssInlineSvg from 'postcss-inline-svg';
  *
  * // css task
  * function css() {
@@ -34,13 +38,15 @@ interface RenameOptions {
  *     .pipe(
  *       pscss({
  *         minify: false,
+ *         plugins: [postcssInlineSvg()],
  *         purgeCSSoptions: {
- *           content: ['src/*.html', 'src/scripts/main.js'],
+ *           content: ['src/*.html', 'src/scripts/main.ts'],
  *         },
  *       })
  *     )
  *   .pipe(rename({ suffix: '.min', extname: '.css' }))
  *   .pipe(dest('dist/css', { sourcemaps: true })) // for inline map
+ *                    // or { sourcemaps: '.' })) // for outline map
  * }
  *
  * // export
@@ -52,13 +58,14 @@ declare function pscss({
   minify,
   presetEnv,
   purgeCSSoptions,
-  loadPaths
+  loadPaths,
+  plugins
 }?: PscssOptions): Transform;
 /**
  * Gulp plugin for rename file - change extname or/and added suffix
- * @param basename - new file name (file stem and file extension)
- * @param extname - new file extension
- * @param suffix - new file suffix
+ * @param basename new file name (file stem and file extension)
+ * @param extname new file extension
+ * @param suffix new file suffix
  */
 declare function rename({
   basename,
@@ -66,4 +73,4 @@ declare function rename({
   suffix
 }?: RenameOptions): Transform;
 //#endregion
-export { type PscssOptions, type RenameOptions, type UserDefinedOptions, pscss, rename };
+export { type AcceptedPlugin, type PscssOptions, type RenameOptions, type UserDefinedOptions, pscss, rename };

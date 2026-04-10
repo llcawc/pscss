@@ -10,7 +10,7 @@ import purgeCSSPlugin, { type UserDefinedOptions } from '@fullhuman/postcss-purg
 import autoprefixer from 'autoprefixer'
 import cssnano from 'cssnano'
 import PluginError from 'plugin-error'
-import postcss, { type PluginCreator } from 'postcss'
+import postcss, { type PluginCreator, type AcceptedPlugin } from 'postcss'
 import atImport from 'postcss-import'
 import postcssNested from 'postcss-nested'
 import postcssPresetEnv from 'postcss-preset-env'
@@ -21,6 +21,7 @@ interface PscssOptions {
   presetEnv?: boolean | undefined
   purgeCSSoptions?: UserDefinedOptions | undefined
   loadPaths?: string[] | undefined
+  plugins?: AcceptedPlugin[] | undefined
 }
 
 interface RenameOptions {
@@ -35,6 +36,7 @@ interface RenameOptions {
  * @param presetEnv allows you to use future CSS features today
  * @param loadPaths paths for files to imports for SASS/SCSS compiler
  * @param purgeCSSoptions remove unused CSS from file - options PurgeCSS
+ * @param plugins array of postcss plugins (can be empty, one, or multiple)
  * @returns object Transform stream.
  *
  * @example
@@ -43,6 +45,7 @@ interface RenameOptions {
  * // import modules
  * import { dest, src } from "gulp";
  * import { pscss, rename } from "@pasmurno/pscss";
+ * import postcssInlineSvg from 'postcss-inline-svg';
  *
  * // css task
  * function css() {
@@ -50,13 +53,15 @@ interface RenameOptions {
  *     .pipe(
  *       pscss({
  *         minify: false,
+ *         plugins: [postcssInlineSvg()],
  *         purgeCSSoptions: {
- *           content: ['src/*.html', 'src/scripts/main.js'],
+ *           content: ['src/*.html', 'src/scripts/main.ts'],
  *         },
  *       })
  *     )
  *   .pipe(rename({ suffix: '.min', extname: '.css' }))
  *   .pipe(dest('dist/css', { sourcemaps: true })) // for inline map
+ *                    // or { sourcemaps: '.' })) // for outline map
  * }
  *
  * // export
@@ -64,7 +69,13 @@ interface RenameOptions {
  *
  * ```
  */
-function pscss({ minify = true, presetEnv = false, purgeCSSoptions, loadPaths }: PscssOptions = {}): Transform {
+function pscss({
+  minify = true,
+  presetEnv = false,
+  purgeCSSoptions,
+  loadPaths,
+  plugins,
+}: PscssOptions = {}): Transform {
   const stream = new Transform({ objectMode: true })
 
   stream._transform = async (file: File, _, callback) => {
@@ -93,6 +104,11 @@ function pscss({ minify = true, presetEnv = false, purgeCSSoptions, loadPaths }:
         return
       }
 
+      // Initialize plugins value of default
+      if (!plugins) {
+        plugins = []
+      }
+
       // Initialize loadPaths value of default
       if (!loadPaths) {
         loadPaths = [file.base, join(file.cwd, 'node_modules')]
@@ -113,7 +129,7 @@ function pscss({ minify = true, presetEnv = false, purgeCSSoptions, loadPaths }:
         }
 
         // run postcss
-        await post(file, minify, presetEnv, purgeCSSoptions, sourceMap, prevSourceMap)
+        await post(file, plugins, minify, presetEnv, purgeCSSoptions, sourceMap, prevSourceMap)
 
         callback(null, file)
       } catch (err) {
@@ -128,6 +144,7 @@ function pscss({ minify = true, presetEnv = false, purgeCSSoptions, loadPaths }:
 // postcss compiler
 async function post(
   file: File,
+  plugins: AcceptedPlugin[],
   minify: boolean,
   presetEnv: boolean,
   purgeCSSoptions: UserDefinedOptions | undefined,
@@ -136,6 +153,7 @@ async function post(
 ): Promise<void> {
   if (file.isBuffer()) {
     try {
+      const isPlugins = plugins.length > 0
       const isPresetEnv = presetEnv
       const isPurge = !!purgeCSSoptions
       const prevMap = prevSourceMap ? file.sourceMap : false
@@ -146,9 +164,9 @@ async function post(
 
       // use PresetEnv or not
       if (isPresetEnv) {
-        postcssPlugins = [atImport(), postcssPresetEnv()]
+        postcssPlugins = [atImport(), postcssPresetEnv(), ...(isPlugins ? plugins : [])]
       } else {
-        postcssPlugins = [atImport(), postcssNested(), autoprefixer()]
+        postcssPlugins = [atImport(), postcssNested(), ...(isPlugins ? plugins : []), autoprefixer()]
       }
 
       if (isPurge) {
@@ -217,13 +235,7 @@ async function sass(file: File, loadPaths: string[], sourceMap: boolean) {
         style: 'expanded',
         sourceMap: sourceMap,
         sourceMapIncludeSources: true,
-        silenceDeprecations: [
-          'import',
-          'color-functions',
-          'global-builtin',
-          'legacy-js-api',
-          'if-function'
-        ],
+        silenceDeprecations: ['import', 'color-functions', 'global-builtin', 'legacy-js-api', 'if-function'],
       })
 
       file.contents = Buffer.from(result.css)
@@ -257,9 +269,9 @@ function cleanSourceMap(file: File, map: RawSourceMap) {
 
 /**
  * Gulp plugin for rename file - change extname or/and added suffix
- * @param basename - new file name (file stem and file extension)
- * @param extname - new file extension
- * @param suffix - new file suffix
+ * @param basename new file name (file stem and file extension)
+ * @param extname new file extension
+ * @param suffix new file suffix
  */
 function rename({ basename = undefined, extname = undefined, suffix = undefined }: RenameOptions = {}): Transform {
   const stream = new Transform({ objectMode: true })
@@ -307,4 +319,4 @@ function rename({ basename = undefined, extname = undefined, suffix = undefined 
 
 // export
 export { pscss, rename }
-export type { PscssOptions, UserDefinedOptions, RenameOptions }
+export type { PscssOptions, AcceptedPlugin, UserDefinedOptions, RenameOptions }

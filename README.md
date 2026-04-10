@@ -27,6 +27,7 @@ interface PscssOptions {
   presetEnv?: boolean; // Use future CSS features today (default: false)
   purgeCSSoptions?: UserDefinedOptions; // Remove unused CSS from file
   loadPaths?: string[]; // Paths for SASS/SCSS imports
+  plugins?: postcss.AcceptedPlugin[]; // Additional PostCSS plugins (default: [])
 }
 ```
 
@@ -114,6 +115,36 @@ function sassWithPaths() {
 export { sassWithPaths };
 ```
 
+### Using Custom PostCSS Plugins
+
+```javascript
+import { dest, src } from "gulp";
+import { pscss, rename } from "@pasmurno/pscss";
+import postcssInlineSvg from "postcss-inline-svg";
+import postcssSortMediaQueries from "postcss-sort-media-queries";
+
+function cssWithPlugins() {
+  return src(["src/styles/main.css"], { sourcemaps: true })
+    .pipe(
+      pscss({
+        minify: false,
+        plugins: [
+          postcssInlineSvg(),
+          postcssSortMediaQueries(),
+          // Add any other PostCSS plugins here
+        ],
+        purgeCSSoptions: {
+          content: ["src/*.html", "src/scripts/main.ts"],
+        },
+      }),
+    )
+    .pipe(rename({ suffix: ".min", extname: ".css" }))
+    .pipe(dest("dist/css", { sourcemaps: true }));
+}
+
+export { cssWithPlugins };
+```
+
 ### Complete Gulpfile Example
 
 ```javascript
@@ -182,6 +213,7 @@ export const watch = () => {
 
 - `cssnano` - CSS minification (when `minify: true`)
 - `purgeCSSPlugin` - Remove unused CSS (when `purgeCSSoptions` provided)
+- **Custom plugins** - Any PostCSS plugins passed via `plugins` option are inserted into the plugin chain (after `postcss-import` and before `autoprefixer`/`preset-env`)
 
 ### CSS Optimization
 

@@ -49,6 +49,7 @@ let sass_embedded = require("sass-embedded");
 * @param presetEnv allows you to use future CSS features today
 * @param loadPaths paths for files to imports for SASS/SCSS compiler
 * @param purgeCSSoptions remove unused CSS from file - options PurgeCSS
+* @param plugins array of postcss plugins (can be empty, one, or multiple)
 * @returns object Transform stream.
 *
 * @example
@@ -57,6 +58,7 @@ let sass_embedded = require("sass-embedded");
 * // import modules
 * import { dest, src } from "gulp";
 * import { pscss, rename } from "@pasmurno/pscss";
+* import postcssInlineSvg from 'postcss-inline-svg';
 *
 * // css task
 * function css() {
@@ -64,13 +66,15 @@ let sass_embedded = require("sass-embedded");
 *     .pipe(
 *       pscss({
 *         minify: false,
+*         plugins: [postcssInlineSvg()],
 *         purgeCSSoptions: {
-*           content: ['src/*.html', 'src/scripts/main.js'],
+*           content: ['src/*.html', 'src/scripts/main.ts'],
 *         },
 *       })
 *     )
 *   .pipe(rename({ suffix: '.min', extname: '.css' }))
 *   .pipe(dest('dist/css', { sourcemaps: true })) // for inline map
+*                    // or { sourcemaps: '.' })) // for outline map
 * }
 *
 * // export
@@ -78,7 +82,7 @@ let sass_embedded = require("sass-embedded");
 *
 * ```
 */
-function pscss({ minify = true, presetEnv = false, purgeCSSoptions, loadPaths } = {}) {
+function pscss({ minify = true, presetEnv = false, purgeCSSoptions, loadPaths, plugins } = {}) {
 	const stream = new node_stream.Transform({ objectMode: true });
 	stream._transform = async (file, _, callback) => {
 		if (file.isNull()) return callback(null, file);
@@ -95,6 +99,7 @@ function pscss({ minify = true, presetEnv = false, purgeCSSoptions, loadPaths } 
 				callback(new plugin_error.default("pscss", "File too large"));
 				return;
 			}
+			if (!plugins) plugins = [];
 			if (!loadPaths) loadPaths = [file.base, (0, node_path.join)(file.cwd, "node_modules")];
 			const sourceMap = !!file.sourceMap;
 			const extname = file.extname.split(".").pop()?.toLowerCase() ?? "";
@@ -104,7 +109,7 @@ function pscss({ minify = true, presetEnv = false, purgeCSSoptions, loadPaths } 
 					await sass(file, loadPaths, sourceMap);
 					prevSourceMap = sourceMap;
 				}
-				await post(file, minify, presetEnv, purgeCSSoptions, sourceMap, prevSourceMap);
+				await post(file, plugins, minify, presetEnv, purgeCSSoptions, sourceMap, prevSourceMap);
 				callback(null, file);
 			} catch (err) {
 				throw new plugin_error.default("pscss", err, {
@@ -116,8 +121,9 @@ function pscss({ minify = true, presetEnv = false, purgeCSSoptions, loadPaths } 
 	};
 	return stream;
 }
-async function post(file, minify, presetEnv, purgeCSSoptions, sourceMap, prevSourceMap) {
+async function post(file, plugins, minify, presetEnv, purgeCSSoptions, sourceMap, prevSourceMap) {
 	if (file.isBuffer()) try {
+		const isPlugins = plugins.length > 0;
 		const isPresetEnv = presetEnv;
 		const isPurge = !!purgeCSSoptions;
 		const mapOptions = {
@@ -127,10 +133,15 @@ async function post(file, minify, presetEnv, purgeCSSoptions, sourceMap, prevSou
 		};
 		const css = new TextDecoder().decode(file.contents);
 		let postcssPlugins = [];
-		if (isPresetEnv) postcssPlugins = [(0, postcss_import.default)(), (0, postcss_preset_env.default)()];
+		if (isPresetEnv) postcssPlugins = [
+			(0, postcss_import.default)(),
+			(0, postcss_preset_env.default)(),
+			...isPlugins ? plugins : []
+		];
 		else postcssPlugins = [
 			(0, postcss_import.default)(),
 			(0, postcss_nested.default)(),
+			...isPlugins ? plugins : [],
 			(0, autoprefixer.default)()
 		];
 		if (isPurge) {
@@ -193,9 +204,9 @@ function cleanSourceMap(file, map) {
 }
 /**
 * Gulp plugin for rename file - change extname or/and added suffix
-* @param basename - new file name (file stem and file extension)
-* @param extname - new file extension
-* @param suffix - new file suffix
+* @param basename new file name (file stem and file extension)
+* @param extname new file extension
+* @param suffix new file suffix
 */
 function rename({ basename = void 0, extname = void 0, suffix = void 0 } = {}) {
 	const stream = new node_stream.Transform({ objectMode: true });
