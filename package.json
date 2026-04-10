@@ -1,6 +1,6 @@
 {
   "name": "@pasmurno/pscss",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Gulp plugin for simple processing of sass styles and modern css style",
   "keywords": [
     "bootstrap",
@@ -52,23 +52,24 @@
     "autoprefixer": "^10.4.27",
     "cssnano": "^7.1.4",
     "plugin-error": "^2.0.1",
-    "postcss": "^8.5.8",
+    "postcss": "^8.5.9",
     "postcss-import": "^16.1.1",
     "postcss-nested": "^7.0.2",
     "postcss-preset-env": "^11.2.0",
+    "sass": "^1.99.0",
     "sass-embedded": "^1.99.0"
   },
   "devDependencies": {
-    "@types/node": "^25.5.2",
+    "@types/node": "^25.6.0",
     "@types/postcss-import": "^14.0.3",
     "@types/vinyl": "^2.0.12",
-    "@typescript/native-preview": "7.0.0-dev.20260404.1",
-    "oxfmt": "^0.43.0",
-    "oxlint": "^1.58.0",
+    "@typescript/native-preview": "7.0.0-dev.20260410.1",
+    "oxfmt": "^0.44.0",
+    "oxlint": "^1.59.0",
     "source-map": "^0.7.6",
     "tsdown": "^0.21.7",
     "typescript": "^6.0.2",
     "vinyl": "^3.0.1",
-    "vitest": "^4.1.2"
+    "vitest": "^4.1.4"
   }
 }
